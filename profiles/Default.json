@@ -1,0 +1,13 @@
+{
+  "mapping": {
+    "left": "tapdouble:left",
+    "right": "hold:right",
+    "middle": "click:right",
+    "side": "hold:left",
+    "extra": "hold:left",
+    "wheel_up": "click:right",
+    "wheel_down": "click:right"
+  },
+  "hold_ms": 150,
+  "device": null
+}

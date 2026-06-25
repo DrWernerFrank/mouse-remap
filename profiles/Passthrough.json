@@ -1,0 +1,13 @@
+{
+  "mapping": {
+    "left": "hold:left",
+    "right": "hold:right",
+    "middle": "hold:middle",
+    "side": "hold:left",
+    "extra": "hold:left",
+    "wheel_up": "scroll:up",
+    "wheel_down": "scroll:down"
+  },
+  "hold_ms": 150,
+  "device": null
+}

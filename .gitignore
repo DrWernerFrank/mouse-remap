@@ -1,0 +1,11 @@
+# build artifacts
+mouse-remap
+*.o
+__pycache__/
+*.pyc
+
+# packaging
+AppDir/
+*.AppImage
+appimagetool*
+squashfs-root/
