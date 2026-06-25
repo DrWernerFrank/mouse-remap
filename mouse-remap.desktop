@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=Mouse Remap
+Comment=Customisable mouse button remapper with profiles
+Exec=AppRun
+Icon=mouse-remap
+Terminal=false
+Categories=Settings;
