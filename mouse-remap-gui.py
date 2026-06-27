@@ -52,15 +52,39 @@ def chown_back(path):
         pass
 
 
+def _stage_for_root(script, binary):
+    """AppImages live on a per-user FUSE mount that root CANNOT read. Before
+    elevating, copy the script + engine + templates onto real disk (in the
+    user's ~/.cache, which root can read) and return the staged paths."""
+    in_appimage = os.environ.get("APPIMAGE") or os.environ.get("APPDIR") \
+        or "/.mount_" in script
+    if not in_appimage:
+        return script, binary
+    stage = os.path.join(os.path.expanduser("~"), ".cache", "mouse-remap", "run")
+    os.makedirs(os.path.join(stage, "profiles"), exist_ok=True)
+    s_script = os.path.join(stage, "mouse-remap-gui.py")
+    s_binary = os.path.join(stage, "mouse-remap")
+    shutil.copyfile(script, s_script)
+    shutil.copyfile(binary, s_binary)
+    os.chmod(s_binary, 0o755)
+    if os.path.isdir(TEMPLATE_DIR):
+        for f in os.listdir(TEMPLATE_DIR):
+            if f.endswith(".json"):
+                shutil.copyfile(os.path.join(TEMPLATE_DIR, f),
+                                os.path.join(stage, "profiles", f))
+    return s_script, s_binary
+
+
 # --- elevate to root while keeping the user's X display ----------------------
 if os.geteuid() != 0:
     display = os.environ.get("DISPLAY", ":0")
     xauth = os.environ.get("XAUTHORITY", os.path.expanduser("~/.Xauthority"))
+    _script, _binary = _stage_for_root(os.path.abspath(__file__), BINARY)
     os.execvp("pkexec", [
         "pkexec", "env",
         f"DISPLAY={display}", f"XAUTHORITY={xauth}",
-        f"MOUSE_REMAP_BIN={BINARY}",
-        sys.executable, os.path.abspath(__file__),
+        f"MOUSE_REMAP_BIN={_binary}",
+        sys.executable, _script,
     ])
 
 import tkinter as tk
